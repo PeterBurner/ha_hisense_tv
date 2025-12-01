@@ -365,19 +365,16 @@ class HisenseTvFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         _LOGGER.debug(f"Using MAC Address: {mac}")
 
-        # **** MODIFIED TO MATCH HISENSE.PY EXACTLY ****
-        # Calculate the hashes EXACTLY as in hisense.py
         first_hash = self.string_to_hash("&vidaa#^app")
         _LOGGER.debug(f"First Hash: {first_hash}")
         
-        # This is the hard-coded hash from hisense.py - don't use first_hash
-        second_hash = self.string_to_hash(f"38D65DC30F45109A369A86FCE866A85B${mac}")
+        second_hash = self.string_to_hash(f"{first_hash}${mac}")
         _LOGGER.debug(f"Second Hash: {second_hash}")
         
         last_digit_of_cross_sum = self.cross_sum(self._timestamp) % 10
         _LOGGER.debug(f"Last digit of cross sum: {last_digit_of_cross_sum}")
         
-        third_hash = self.string_to_hash(f"his{last_digit_of_cross_sum}h*i&s%e!r^v0i1c9")
+        third_hash = self.string_to_hash(f"his{last_digit_of_cross_sum}h!i@s#$v%i^d&a*a")
         _LOGGER.debug(f"Third Hash: {third_hash}")
         
         fourth_hash = self.string_to_hash(f"{self._timestamp}${third_hash[:6]}")

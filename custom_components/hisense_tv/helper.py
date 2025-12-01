@@ -191,14 +191,13 @@ def generate_token(mac=None, timestamp=None):
     first_hash = string_to_hash("&vidaa#^app")
     _LOGGER.debug(f"First Hash: {first_hash}")
     
-    # This matches the hard-coded hash from hisense.py
-    second_hash = string_to_hash(f"38D65DC30F45109A369A86FCE866A85B${mac}")
+    second_hash = string_to_hash(f"{first_hash}${mac}")
     _LOGGER.debug(f"Second Hash: {second_hash}")
     
     last_digit_of_cross_sum = cross_sum(timestamp) % 10
     _LOGGER.debug(f"Last digit of cross sum: {last_digit_of_cross_sum}")
     
-    third_hash = string_to_hash(f"his{last_digit_of_cross_sum}h*i&s%e!r^v0i1c9")
+    third_hash = string_to_hash(f"his{last_digit_of_cross_sum}h!i@s#$v%i^d&a*a")
     _LOGGER.debug(f"Third Hash: {third_hash}")
     
     fourth_hash = string_to_hash(f"{timestamp}${third_hash[:6]}")
