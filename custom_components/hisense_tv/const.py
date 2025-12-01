@@ -3,7 +3,7 @@ from homeassistant.const import Platform
 
 DOMAIN = "hisense_tv"
 PLATFORMS = [Platform.MEDIA_PLAYER, Platform.SENSOR, Platform.SWITCH, Platform.BUTTON]
-VERSION = "1.3.6"
+VERSION = "1.3.7"
 
 DEFAULT_NAME = "Hisense TV"
 DEFAULT_PORT = 36669

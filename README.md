@@ -1,108 +1,51 @@
-Hi all,
-
-I have discontinued this as Home Assistant now works with Homekit and the Homekit integration of the Hisense TV works sufficiently for me to turn on / off the TV and switch HDMI channels and such 👍
-
-![image](https://github.com/user-attachments/assets/1217f74a-a5c0-4852-9cde-4aa60bf565cb)
-
-
+# DISCLAIMER
+> ⚠️ This project is not being actively maintained. It is just a PoC to show that the new authentication method of Hisense TVs can be implemented in Home Assistant. Use at your own risk. ⚠️
 
 # Hisense TV Integration for Home Assistant
 
-Integration an Hisense TV as media player into Home Assistant. The communication is handled via the integrated MQTT broker and wake-on-LAN.
+Integration of a Hisense TV as media player into Home Assistant. The communication is handled via the integrated MQTT broker and wake-on-LAN.
 Requires Home Assistant >= `2021.12.x`.
 
 ## Current features:
 * Turn on / off
-* Display current status
-  * Source (TV, HDMI, Apps)
-  * Channel name / number
-  * EPG data of current show
-* Volume control
-* Media browser
-  * LNB selector
-  * Channel selector
-  * Apps
-* Read picture setting
-
-TBD:
-* Expose ON/OFF as switch
-* Expose all keys as buttons
-* Enhance EPG/guide handling
-
-## Configuration
-
-The TV provides a MQTT broker on port `36669`. Home Assistant can only communicate with one MQTT broker, so you have to create a bridge between the two broker.
-
-## MQTT
-
-The MQTT broker is secured by credentials. Some TVs (like mine) even require client certificates for incomming connections. I won't include them in this repo, but you can find them online or extract them yourself. See [Acknowledgment](https://github.com/sehaas/ha_hisense_tv#acknowledgment).
-
-Connection shema:
-```
-+-----------+          +-----------+
-| Home      |  client  | Mosquitto |
-| Assistant |--------->|           |
-+-----------+          +-----------+
-                            /\
-                     bridge ||
-                            \/
-                      +-------------+
-                      | Hisense TV  |
-                      | MQTT Broker |
-                      +-------------+
-```
-
-The `mosquitto` bridge configuration using client certificates.
-
-```
-connection hisense
-address <TV_IP_ADDRESS>:36669
-username <HISENSE_MQTT_USERNAME>
-password  <HISENSE_MQTT_PASSWORD>
-clientid HomeAssistant
-bridge_tls_version tlsv1.2
-bridge_cafile hisense_ca.pem
-bridge_certfile hisense_client.pem
-bridge_keyfile hisense_client.key
-bridge_insecure true
-start_type automatic
-try_private true
-topic /remoteapp/# both 0 <MQTT_PREFIX> ""
-```
-Replace `<TV_IP_ADDRESS>`, credentials and `<MQTT_PREFIX>` according to your setup. The `<MQTT_PREFIX>` is needed if you have multiple TVs, otherwise you should just use the default `hisense`:
-```
-topic /remoteapp/# both 0 hisense ""
-```
-
-(Optional) If you have multiple TVs you have to replicate the whole configuration for each TV.
-The `<MQTT_PREFIX>` must be unique for every TV. For example:
-```
-topic /remoteapp/# both 0 livingroom_tv ""
-```
-```
-topic /remoteapp/# both 0 kids_tv ""
-```
-
-(Optional) This setup uses the same prefix for incoming and outgoing messages. The integration supports separated values. You have to adapt the topic setup accordingly.
-
-## Wake-on-LAN
-
-The TV can be turned on by a Wake-on-LAN packet. The MAC address must be configured during integration setup.
 
 ## Setup in Home Assistant
 
-The integration can be added via the Home Assistant UI. Add the integration and setup your TV. During the first setup your TV should be turned on. The integration requires a PIN code from you TV. The PIN will be triggered automatically during setup. This is a onetime step where the client `HomeAssistant` is requesting access to remote controll the TV.
+[![Add this repository to HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=PeterBurner&repository=ha_hisense_tv&category=integration)
+1. Download and install the integration via [HACS](https://www.hacs.xyz/).
+2. Restart Home Assistant.
+3. Add the [client certificate](https://github.com/nikagl/hisense/issues/4#issuecomment-2441630703) to your Home Assistant config folder.
+4. Go to `Settings` -> `Devices & Services` -> `Add Integration`. Search for `Hisense TV` and add the integration.
 
-# YMMV
+> [!NOTE]
+> During the first setup your TV should be turned on. The integration requires a PIN code from you TV. The PIN will be triggered automatically during setup. This is a onetime step where the client `HomeAssistant` is requesting access to remote control the TV.
 
-Tested on an [Hisense A71 Series](https://hisenseme.com/product/75-65-58-55-50-43-a71-series/) with mandatory client certificates. `gettvstate` does not return a `state` but can be used to authenticate the client.
-The 
+# Compatibility
+
+Tested on a `Hisense 65U8KQ` with firmware version `V0000.09.09O.P0930`.
+Calling `http://ip:18400/MediaServer/rendererdevicedesc.xml` shows `transport_protocol=3290`.
 
 # Acknowledgment
-Everything I needed to write this integration could be gathered from these sources. Information about the MQTT topics, credentials or certificates can be found there.
+This repository is a fork of @nikagl's [ha_hisense_tv](https://github.com/nikagl/ha_hisense_tv) which in turn is also a fork of the original @sehaas [ha_hisense_tv](https://github.com/sehaas/ha_hisense_tv). My own contribution boils down to replacing a password salt. So all props to them!
 
-* [@Krazy998's mqtt-hisensetv](https://github.com/Krazy998/mqtt-hisensetv)
-* [@newAM's hisensetv_hass](https://github.com/newAM/hisensetv_hass)
+## Related Projects
+
+* [Original ha_hisense_tv](https://github.com/sehaas/ha_hisense_tv) by @sehaas
+* [Hisense TV MQTT guide](https://github.com/Krazy998/mqtt-hisensetv) by @Krazy998
+* [ha_hisense_tv with new authentication method](https://github.com/nikagl/ha_hisense_tv) by @nikagl
+* [Python script with new authentication method](https://github.com/nikagl/hisense) by @nikagl
+* [ha_hisense_tv with latest features](https://github.com/sven-probst/ha_hisense_tv) by @sven-probst
+* [ha_hisense_tv predecessor](https://github.com/newAM/hisensetv_hass) by @newAM
+
+## Related Discussions
+
+* https://github.com/Krazy998/mqtt-hisensetv/issues/14
+* https://github.com/nikagl/hisense/issues/4
+* https://github.com/nikagl/hisense/issues/14
 * [HA Community](https://community.home-assistant.io/t/hisense-tv-control/97638/1)
-* [RemoteNOW App](https://play.google.com/store/apps/details?id=com.universal.remote.ms)
-* [@d3nd3](https://github.com/d3nd3/Hisense-mqtt-keyfiles)
+
+## Other
+
+* [Client certificate for newer Hisense TVs / firmwares](https://github.com/nikagl/hisense/issues/4#issuecomment-2441630703) by @nikagl
+* [Client certificate for older Hisense TVs / firmwares](https://github.com/d3nd3/Hisense-mqtt-keyfiles) by @d3nd3
+* [VIDAA Smart TV app](https://play.google.com/store/apps/details?id=com.universal.remote.multi) by Hisense
