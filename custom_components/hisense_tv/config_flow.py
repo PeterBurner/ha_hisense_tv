@@ -380,7 +380,7 @@ class HisenseTvFlow(config_entries.ConfigFlow, domain=DOMAIN):
         fourth_hash = self.string_to_hash(f"{self._timestamp}${third_hash[:6]}")
         _LOGGER.debug(f"Fourth Hash: {fourth_hash}")
 
-        self._username = f"his${self._timestamp}"
+        self._username = f"his${self._timestamp^6239759785777146216}"
         _LOGGER.debug(f"Using username: {self._username}")
             
         self._password = fourth_hash

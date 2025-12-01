@@ -203,7 +203,7 @@ def generate_token(mac=None, timestamp=None):
     fourth_hash = string_to_hash(f"{timestamp}${third_hash[:6]}")
     _LOGGER.debug(f"Fourth Hash: {fourth_hash}")
 
-    username = f"his${timestamp}"
+    username = f"his${timestamp^6239759785777146216}"
     password = fourth_hash
     client_id = f"{mac}$his${second_hash[:6]}_vidaacommon_001"
     
